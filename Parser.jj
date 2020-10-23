@@ -1,0 +1,98 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  static = false;
+}
+
+PARSER_BEGIN(Parser)
+
+public class Parser
+{
+}
+
+PARSER_END(Parser)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+< PLUS : "+" >
+| < MINUS : "-" >
+| < MULTIPLY : "*" >
+| < DIVIDE : "/" >
+| <EQOP:"=">
+| <OPEN:"(">
+| <CLOSE:")">
+| <DOT:".">
+| <MINUSSIGN:"#">
+| <MOD:"mod">
+| <NUM:("0"|["1"-"9"](["0"-"9"])*)(<DOT>(["0"-"9"])+)? >
+}
+
+public double start():
+{
+	double n1;
+}
+{
+ 	n1=sum()
+   <EQOP>{return n1;}
+}
+public double sum():
+{
+  double n1;
+  double n2;
+}
+{
+  n1=prod()(
+	<PLUS>n2=prod() {
+		n1+=n2;
+	}
+	| <MINUS>n2=prod() {
+  		n1-=n2;
+  	}
+   )* {return n1;}
+}
+public double prod():
+{
+  double n1;
+  double n2;
+}
+{
+   n1=atai()(
+	<MULTIPLY> n2=atai() {
+	  	n1*=n2;
+	}
+	| <DIVIDE>n2=atai() {
+  		n1/=n2;
+	}
+	|<MOD> n2=atai() {
+	  	n1%=n2;
+	}
+	)* {return n1;}
+}
+public double atai():
+{
+  double n;
+}
+{
+  n=PE() {return n;}
+| <OPEN> n=sum()<CLOSE>{return n;}
+}
+
+public double PE(): {
+	Token token;
+}
+{
+	token=<NUM> {return Double.parseDouble(token.image);}
+|<MINUSSIGN> token =<NUM>{return -Double.parseDouble(token.image);}
+}
+
+
